@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>SC2 Parsing</title>
-    <link rel="stylesheet" href="index.css">
-  </head>
-  <body>
-    <h1>Electron parsing SC2 replays!</h1>
-    <p>Choose a replay to parse:</p>
-    <input type="file" id="freplay" name="replay" accept=".SC2Replay">
-  </body>
-  <script type="text/javascript" src="other.js"></script>  
+
+<head>
+  <meta charset="UTF-8">
+  <title>SC2 Parsing</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+  <h1>ElectronJS parsing SC2 replays!</h1>
+  <p>Choose a replay to parse:</p>
+  <input type="file" id="freplay" name="replay" accept=".SC2Replay">
+  <button id="showhidebutton" onclick="showhideOverlay()">Show / Hide</button>
+</body>
+<script type="text/javascript" src="other.js"></script>
+
 </html>

@@ -7,7 +7,12 @@ fileInput.onchange = () => {
   window.api.send("toMain", ['replayfile', selectedFile.path])
 }
 
+function showhideOverlay() {
+  window.api.send("toMain", ['overlay', 'showhideoverlay'])
+}
+
+
 // Print received data 
 window.api.receive("fromMain", (data) => {
-    console.log(`Received: ${data} from main process`);
+  console.log(`Received: ${data} from main process`);
 });

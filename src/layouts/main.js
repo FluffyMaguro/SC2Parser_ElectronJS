@@ -40,6 +40,8 @@ window.api.receive("fromMain", (data) => {
         let rdata = JSON.parse(data[1]);
         console.log(rdata);
         postGameStatsTimed(rdata);
+    } else if (data == 'showhideoverlay') {
+        showhide()
     } else {
         console.log(`Received: ${data} from main process`);
     }
@@ -47,11 +49,11 @@ window.api.receive("fromMain", (data) => {
 
 //main functionality
 setColors(null, null, null, null);
-setTimeout(function(){
-        // connect_to_socket();                  
-        document.getElementById('bgdiv').style.display = 'block';
-        document.getElementById('ibgdiv').style.display = 'block';              
-       }, 500);
+setTimeout(function () {
+    // connect_to_socket();                  
+    document.getElementById('bgdiv').style.display = 'block';
+    document.getElementById('ibgdiv').style.display = 'block';
+}, 500);
 
 function connect_to_socket() {
     if (function_is_running) {
@@ -59,16 +61,16 @@ function connect_to_socket() {
     };
     if (do_not_use_websocket) {
         return
-     };
+    };
     function_is_running = true;
     let socket = new WebSocket("ws://localhost:" + PORT);
-    socket.onopen = function(e) {};
-    socket.onmessage = function(event) {
+    socket.onopen = function (e) { };
+    socket.onmessage = function (event) {
         if (do_not_use_websocket) {
-                socket.onclose = function() {};
-                socket.close();
-                return
-             };
+            socket.onclose = function () { };
+            socket.close();
+            return
+        };
         var data = JSON.parse(event.data);
         console.log('New event');
         if (data['replaydata'] != null) {
@@ -80,7 +82,7 @@ function connect_to_socket() {
         } else if (data['showEvent'] != null) {
             showstats()
         } else if (data['showHideEvent'] != null) {
-            showhide()            
+            showhide()
         } else if (data['uploadEvent'] != null) {
             setTimeout(uploadStatus, 1500, data['response'])
         } else if (data['initEvent'] != null) {
@@ -91,7 +93,7 @@ function connect_to_socket() {
             console.log('unidentified message')
         }
     };
-    socket.onclose = function(event) {
+    socket.onclose = function (event) {
         if (event.wasClean) {
             console.log('CLEAN EXIT: ' + event)
         } else {
@@ -99,7 +101,7 @@ function connect_to_socket() {
         };
         reconnect_to_socket();
     };
-    socket.onerror = function(error) {
+    socket.onerror = function (error) {
         console.log('ERROR: ' + error);
         reconnect_to_socket()
     };
@@ -108,7 +110,7 @@ function connect_to_socket() {
 function reconnect_to_socket(message) {
     console.log('Reconnecting..')
     function_is_running = false;
-    setTimeout(function() {
+    setTimeout(function () {
         connect_to_socket();
     }, 1000);
 }
@@ -119,9 +121,9 @@ function showHidePlayerWinrate(dat) {
         showingWinrateStats = false;
         document.getElementById('playerstats').style.right = '-60vh';
         document.getElementById('playerstats').style.opacity = '0';
-      } else {
+    } else {
         playerWinrate(dat)
-      }
+    }
 }
 
 
@@ -135,16 +137,16 @@ function playerWinrate(dat) {
         if ((value.length == 1) && (value[0] == null)) {
             text += 'No games played with <span class="player_stat">' + key + '</span>'
 
-        // no winrate data but with a player note ([None, note])
+            // no winrate data but with a player note ([None, note])
         } else if ((value.length == 2) && (value[0] == null)) {
             text += 'No games played with <span class="player_stat">' + key + '</span><br>' + value[1]
 
-        // winrate data ([wins, losses, apm, commander, frequency, kills])
+            // winrate data ([wins, losses, apm, commander, frequency, kills])
         } else if (value.length >= 6) {
             let total_games = value[0] + value[1];
             text += 'You played ' + total_games + ' games with <span class="player_stat">' + key + '</span>';
             text += ' (' + Math.round(100 * value[0] / total_games) + '% winrate | ' + Math.round(100 * value[5]) + '% kills | ' + value[2] + ' APM)'
-        } 
+        }
         // winrate data and player note ([wins, losses, apm, commander, frequency, kills,  note])
         if (value.length == 7) {
             text += '<br>' + value[6]
@@ -153,11 +155,11 @@ function playerWinrate(dat) {
     element.innerHTML = text;
     element.style.right = '2vh';
     element.style.opacity = '1';
-    setTimeout(function() {
+    setTimeout(function () {
         document.getElementById('playerstats').style.right = '-60vh';
         document.getElementById('playerstats').style.opacity = '0';
         showingWinrateStats = false;
-    }, winrateTime*1000)
+    }, winrateTime * 1000)
 }
 
 
@@ -237,13 +239,13 @@ function mutatorInfo(data) {
         divelement.getElementsByTagName("img")[0].src = '../HQ Mutator Icons/' + data[i][0] + '.png';
         divelement.getElementsByTagName("p")[0].innerHTML = '<span class="muttop">' + data[i][0] + '</span><span class="mutvalue"> ' + data[i][1] + '</span><br><span class="mutdesc">' + mutatorDescriptions[data[i][0]] + '</span>';
         divelement.style.display = 'inline-block';
-        setTimeout(function(el) {
+        setTimeout(function (el) {
             el.style.opacity = '1'
         }, i * 400, divelement);
-        setTimeout(function(el) {
+        setTimeout(function (el) {
             el.style.opacity = '0'
         }, mduration, divelement);
-        setTimeout(function(el) {
+        setTimeout(function (el) {
             el.style.display = 'none'
         }, mduration + 5000, divelement);
     }
@@ -259,7 +261,7 @@ function postGameStatsTimed(data) {
             hidestats()
         } else {
             document.getElementById('stats').style.opacity = '0';
-            setTimeout(function() {
+            setTimeout(function () {
                 document.getElementById('stats').style.opacity = '1'
             }, 300);
             setTimeout(postGameStats, 300, data, showing = true);
@@ -300,15 +302,15 @@ function fillCommander(el, commander, commander_level) {
     var addition = '';
     if (commander == null) {
         return
-        }
+    }
     if (commander_level < 15) {
-        addition = '{'+commander_level+'}'
-        }
+        addition = '{' + commander_level + '}'
+    }
     if (el == 'com1') {
-        fill(el,commander+' '+addition)
-       } else {
-        fill(el,addition+' '+commander)
-       }
+        fill(el, commander + ' ' + addition)
+    } else {
+        fill(el, addition + ' ' + commander)
+    }
 }
 
 function postGameStats(data, showing = false) {
@@ -316,8 +318,8 @@ function postGameStats(data, showing = false) {
     document.getElementById('killbar').style.display = 'block';
     document.getElementById('nodata').style.display = 'none';
     //fill
-    fill('CMtalent1',data['mainPrestige'])
-    fill('CMtalent2',data['allyPrestige'])
+    fill('CMtalent1', data['mainPrestige'])
+    fill('CMtalent2', data['allyPrestige'])
     fill('comp', data['comp']);
 
     // save file name
@@ -330,7 +332,7 @@ function postGameStats(data, showing = false) {
             bonus_text = data['bonus'][i]
         } else {
             bonus_text = bonus_text + ' | ' + data['bonus'][i]
-        }                                            
+        }
     }
     fill('bonus', bonus_text);
 
@@ -346,22 +348,22 @@ function postGameStats(data, showing = false) {
         fill('mutators', '<span id="resultsp">' + data['result'] + '!</span>');
         fill('result', 'kills');
     }
-    
+
 
     //BG images
     if ((data['mainCommander'] != null) && (data['mainCommander'] != '')) {
-        document.getElementById('killbar1img').src ='Commanders/'+ data['mainCommander'] +'.png'
+        document.getElementById('killbar1img').src = 'Commanders/' + data['mainCommander'] + '.png'
     } else {
-        document.getElementById('killbar1img').src =''
+        document.getElementById('killbar1img').src = ''
     }
     if ((data['allyCommander'] != null) && (data['allyCommander'] != '')) {
-        document.getElementById('killbar2img').src ='Commanders/'+ data['allyCommander'] +'.png'
+        document.getElementById('killbar2img').src = 'Commanders/' + data['allyCommander'] + '.png'
     } else {
-        document.getElementById('killbar2img').src =''
-    }    
+        document.getElementById('killbar2img').src = ''
+    }
 
     fill('name1', data['main']);
-    
+
     fill('map', data['map_name'] + '&nbsp;&nbsp;(' + format_length(data['length']) + ')');
     fill('name2', data['ally']);
     fillCommander('com1', data['mainCommander'], data['mainCommanderLevel'])
@@ -382,15 +384,15 @@ function postGameStats(data, showing = false) {
     };
 
     if (data['Commander'] != null) {
-        fill('rng', 'Randomized commander: ' + data['Commander'] + ' (' +  data['Prestige'] + ')');
+        fill('rng', 'Randomized commander: ' + data['Commander'] + ' (' + data['Prestige'] + ')');
     } else {
         fill('rng', '');
-    };    
+    };
 
     if ((data['extension'] > 0) && (data['mutators'] != null) && (data['mutators'].length == 0)) {
-        fill('brutal', 'Weekly ('+ data['difficulty'] + ')' ) 
-    } else if ((data['extension'] > 0) && (data['mutators'] != null)) { 
-        fill('brutal', 'Custom ('+ data['difficulty'] + ')' )
+        fill('brutal', 'Weekly (' + data['difficulty'] + ')')
+    } else if ((data['extension'] > 0) && (data['mutators'] != null)) {
+        fill('brutal', 'Custom (' + data['difficulty'] + ')')
     } else if (data['B+'] > 0) {
         fill('brutal', 'Brutal+' + data['B+'])
     } else {
@@ -407,7 +409,7 @@ function postGameStats(data, showing = false) {
         document.getElementById('killbar2').style.backgroundColor = gP2Color;
         //delay unless it's already being showed
         if (!(showing)) {
-            setTimeout(function() {
+            setTimeout(function () {
                 document.getElementById('killbar1').style.width = percent1;
                 document.getElementById('killbar2').style.width = percent2;
             }, 700)
@@ -446,7 +448,7 @@ function postGameStats(data, showing = false) {
     if (data['Victory'] == null) {
         document.getElementById('loader').style.opacity = '0';
         document.getElementById('loader').innerHTML = ''
-    } 
+    }
     if (data['newReplay'] != null) {
         setTimeout(hidestats, DURATION * 1000);
     }
@@ -467,7 +469,7 @@ function hidestats() {
     document.getElementById('loader').style.opacity = '0';
     document.getElementById('session').style.opacity = '0';
     document.getElementById('rng').style.opacity = '0';
-    setTimeout(function() {
+    setTimeout(function () {
         document.getElementById('session').innerHTML = '';
         document.getElementById('rng').innerHTML = '';
         document.getElementById('loader').style.opacity = '0';
@@ -479,7 +481,7 @@ function showstats() {
     toBeShown = true;
     document.getElementById('stats').style.right = '2vh';
     document.getElementById('bgdiv').style.opacity = '1';
-    setTimeout(function(){document.getElementById('session').style.opacity = '0.6'; document.getElementById('rng').style.opacity = '1'},1000)
+    setTimeout(function () { document.getElementById('session').style.opacity = '0.6'; document.getElementById('rng').style.opacity = '1' }, 1000)
 
 }
 
@@ -556,8 +558,8 @@ function fillunits(el, dat, commander) {
         };
 
         // Switch few unit names
-        if ((key == 'Stalker') && (commander == 'Alarak')) {key = 'Slayer'};
-        if ((key == 'Sentinel') && (commander == 'Fenix')) {key = 'Legionnaire'};
+        if ((key == 'Stalker') && (commander == 'Alarak')) { key = 'Slayer' };
+        if ((key == 'Sentinel') && (commander == 'Fenix')) { key = 'Legionnaire' };
 
         spacer = '';
         percent = Math.round(100 * value[3]);
@@ -567,7 +569,7 @@ function fillunits(el, dat, commander) {
             spacer = 'nokillpadding'
         };
         if (value[2] >= minimum_kills) {
-            idx += 1;                   
+            idx += 1;
             text = text + key + ' <span class="unitkills ' + spacer + '">' + percent + '% | ' + value[2] + '</span>  <span class="unitcreated">' + value[0] + '</span>  <span class="unitdied">' + value[1] + '</span><br>'
         };
     }

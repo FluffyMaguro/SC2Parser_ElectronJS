@@ -1,6 +1,7 @@
-const { app, BrowserWindow, ipcMain} = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
+
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
@@ -21,8 +22,10 @@ async function createWindow() {
       contextIsolation: true, // protect against prototype pollution
       enableRemoteModule: false, // turn off remote
       preload: path.join(__dirname, "preload.js") // use a preload script
-  }
+    }
   });
+
+  win.setMenu(null); //hide menubar
 
   // and load the index.html of the app.
   win.loadFile(path.join(__dirname, 'index.html'));
@@ -44,29 +47,31 @@ async function createWindow() {
     y: 0,
     width: 600,
     height: 600,
+    focusable: false,
     alwaysOnTop: true,
     transparent: true,
-    // skipTaskbar: true, // Don't show in task bar
-    // fullscreen: true,
-    frame:false,
+    fullscreen: true,
+    frame: false,
     title: 'Overlay',
     webPreferences: {
       contextIsolation: true, // protect against prototype pollution
       enableRemoteModule: false, // turn off remote
       preload: path.join(__dirname, "preload.js") // use a preload script
-  }
+    }
   });
 
+
+  overlay.setIgnoreMouseEvents(true);
+
   // and load the index.html of the app.
-  // overlay.loadFile(path.join(__dirname, 'index.html'));
   overlay.loadFile(path.join(__dirname, 'layouts/Layout.html'));
 
   // Open the DevTools.
   // overlay.webContents.openDevTools();
 
 
-  let file_path = "C:\\Users\\Maguro\\Desktop\\[2v1] Chain of Ascension.SC2Replay";
-  parse_replay(file_path);
+  // let file_path = "C:\\Users\\Maguro\\Desktop\\Temple of the Past (471).SC2Replay";
+  // parse_replay(file_path);
 
 };
 
@@ -98,28 +103,25 @@ app.on('activate', () => {
 
 
 
-
 // This receives message from the front-end
 ipcMain.on("toMain", (event, args) => {
-  console.log(`event: ${event}`);
-  console.log(`args: ${args}`);
+  console.log(`Message args: ${args}`);
 
   // Replay file loaded
   if ((args.length > 1) && (args[0] == 'replayfile')) {
     parse_replay(args[1]);
-    win.webContents.send("fromMain", 'parsed succesfully!')
+  }
+  // Pass messages meant for overlay
+  if (args[0] == "overlay") {
+    overlay.webContents.send("fromMain", args.slice(1))
   }
 });
 
 
 
 
-
-
-
-
 // Parsing replays
-const {PythonShell} = require('python-shell');
+const { PythonShell } = require('python-shell');
 const replay_script = path.join(__dirname, 'parser/ReplayAnalysis.py');
 const python_path = path.join(__dirname, 'venv\\Scripts\\python.exe');
 
@@ -142,14 +144,14 @@ function parse_replay(file) {
 
 function save_as_json(file, data) {
   // Save data into a json file
-    try {
-      let jdata = JSON.stringify(data);     
-      output_path = file.replace('.SC2Replay','.json');
-      fs.writeFileSync(output_path, jdata, 'utf8');
-      console.log('file saved!')
+  try {
+    let jdata = JSON.stringify(data);
+    output_path = file.replace('.SC2Replay', '.json');
+    fs.writeFileSync(output_path, jdata, 'utf8');
+    console.log('File saved!')
 
-    } catch (err) {
-      console.log(`Error writing file: ${err}`);
+  } catch (err) {
+    console.log(`Error writing file: ${err}`);
   }
 }
 
@@ -166,7 +168,7 @@ function template_periodic_update() {
   pyshell.on('message', function (message) {
     console.log(`Message from python: ${message}`);
   });
-   
+
   pyshell.end(function (err) {
     if (err) throw err;
     console.log('>>>> Python loop finished');

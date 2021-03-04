@@ -5,11 +5,12 @@ All imports and local names relevant only to this file are _implied_private.
 
 import functools as _functools
 import os as _os
+import pathlib
 
 from ._data_utils import (csv_to_dictitems as _csv_to_dictitems, txt_to_iter as _txt_to_iter, csv_to_comastery_dict as _csv_to_comastery_dict,
                           get_file_path)
 
-_DATADIR = 'src/parser/SC2Dictionaries'
+_DATADIR = pathlib.Path(__file__).parent #'src/parser/SC2Dictionaries'
 _joinDATA = _functools.partial(get_file_path, subfolder=_DATADIR)
 
 UnitNameDict = _csv_to_dictitems(_joinDATA('UnitNames.csv'))

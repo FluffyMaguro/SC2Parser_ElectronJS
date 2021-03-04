@@ -4,3 +4,12 @@ body {
   max-width: 38rem;
   padding: 2rem;
 }
+
+#freplay {
+  width: 500px
+}
+
+#showhidebutton {
+  display: block;
+  margin-top: 20px
+}
