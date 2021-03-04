@@ -3,7 +3,7 @@ const fileInput = document.getElementById('freplay');
 
 fileInput.onchange = () => {
   let selectedFile = fileInput.files[0];
-  console.log(selectedFile);
+  // console.log(selectedFile);
   window.api.send("toMain", ['replayfile', selectedFile.path])
 }
 
