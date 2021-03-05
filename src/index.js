@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
+const execFile = require('child_process').execFile;
 const path = require('path');
 const fs = require('fs');
 
@@ -121,31 +122,42 @@ ipcMain.on("toMain", (event, args) => {
 
 
 // Parsing replays
-const { PythonShell } = require('python-shell');
-const replay_script = path.join(__dirname, 'parser/ReplayAnalysis.py');
-const python_path = path.join(__dirname, 'venv\\Scripts\\python.exe');
+// const { PythonShell } = require('python-shell');
+// const replay_script = path.join(__dirname, 'parser/ReplayAnalysis.py');
+// const python_path = path.join(__dirname, 'venv\\Scripts\\python.exe');
 
 function parse_replay(file) {
   // Call python script to parse a replay
-  let options = {
-    mode: 'text',
-    pythonPath: python_path,
-    args: [file] //arguments for the function
-  };
 
-  PythonShell.run(replay_script, options, function (err, results) {
-    if (err) throw err;
-    // results is an array consisting of messages collected during execution
-    console.log(results[0]);
-    save_as_json(file, results[0]);
-    overlay.webContents.send("fromMain", ['replaydata', results[0]]);
-  })
+  // let options = {
+  //   mode: 'text',
+  //   pythonPath: python_path,
+  //   args: [file] //arguments for the function
+  // };
+
+  // PythonShell.run(replay_script, options, function (err, results) {
+  //   if (err) throw err;
+  //   // results is an array consisting of messages collected during execution
+  //   console.log(results[0]);
+  //   save_as_json(file, results[0]);
+  //   overlay.webContents.send("fromMain", ['replaydata', results[0]]);
+  // })
+
+    // For proper packaging I need to use pyinstalled executable instead of running python with shell
+    const analysis_path = path.join(__dirname, 'ReplayAnalysis/ReplayAnalysis.exe');
+    execFile(analysis_path, [file], (err, stdout, stderr) => {
+      if (err) {
+        throw err;
+      }
+      save_as_json(file, stdout);
+      overlay.webContents.send("fromMain", ['replaydata', stdout]);
+    });
 }
 
 function save_as_json(file, data) {
   // Save data into a json file
   try {
-    let jdata = JSON.stringify(data);
+    const jdata = JSON.stringify(data);
     output_path = file.replace('.SC2Replay', '.json');
     fs.writeFileSync(output_path, jdata, 'utf8');
     console.log('File saved!')
@@ -155,22 +167,22 @@ function save_as_json(file, data) {
   }
 }
 
-function template_periodic_update() {
-  // Shows how to receive data from a running python script
-  let options = {
-    mode: 'text',
-    pythonPath: python_path,
-    args: [] //arguments for the function
-  };
+// function template_periodic_update() {
+//   // Shows how to receive data from a running python script
+//   let options = {
+//     mode: 'text',
+//     pythonPath: python_path,
+//     args: [] //arguments for the function
+//   };
 
-  var pyshell = new PythonShell(path.join(__dirname, 'template_periodic_update.py'), options);
+//   var pyshell = new PythonShell(path.join(__dirname, 'template_periodic_update.py'), options);
 
-  pyshell.on('message', function (message) {
-    console.log(`Message from python: ${message}`);
-  });
+//   pyshell.on('message', function (message) {
+//     console.log(`Message from python: ${message}`);
+//   });
 
-  pyshell.end(function (err) {
-    if (err) throw err;
-    console.log('>>>> Python loop finished');
-  });
-}
+//   pyshell.end(function (err) {
+//     if (err) throw err;
+//     console.log('>>>> Python loop finished');
+//   });
+// }

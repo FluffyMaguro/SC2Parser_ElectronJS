@@ -10,7 +10,7 @@ import pathlib
 from ._data_utils import (csv_to_dictitems as _csv_to_dictitems, txt_to_iter as _txt_to_iter, csv_to_comastery_dict as _csv_to_comastery_dict,
                           get_file_path)
 
-_DATADIR = pathlib.Path(__file__).parent #'src/parser/SC2Dictionaries'
+_DATADIR = 'SC2Dictionaries' #pathlib.Path(__file__).parent
 _joinDATA = _functools.partial(get_file_path, subfolder=_DATADIR)
 
 UnitNameDict = _csv_to_dictitems(_joinDATA('UnitNames.csv'))
