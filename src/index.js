@@ -9,7 +9,6 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
   app.quit();
 }
 
-
 let win;
 let overlay;
 
@@ -41,7 +40,6 @@ async function createWindow() {
 
   // template_periodic_update()
 
-
   // Overlay
   overlay = new BrowserWindow({
     x: 1300,
@@ -69,14 +67,7 @@ async function createWindow() {
 
   // Open the DevTools.
   // overlay.webContents.openDevTools();
-
-
-  // let file_path = "C:\\Users\\Maguro\\Desktop\\Temple of the Past (471).SC2Replay";
-  // parse_replay(file_path);
-
 };
-
-
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -101,9 +92,6 @@ app.on('activate', () => {
 });
 
 
-
-
-
 // This receives message from the front-end
 ipcMain.on("toMain", (event, args) => {
   console.log(`Message args: ${args}`);
@@ -117,9 +105,6 @@ ipcMain.on("toMain", (event, args) => {
     overlay.webContents.send("fromMain", args.slice(1))
   }
 });
-
-
-
 
 // Parsing replays
 // const { PythonShell } = require('python-shell');
@@ -143,15 +128,15 @@ function parse_replay(file) {
   //   overlay.webContents.send("fromMain", ['replaydata', results[0]]);
   // })
 
-    // For proper packaging I need to use pyinstalled executable instead of running python with shell
-    const analysis_path = path.join(__dirname, 'ReplayAnalysis/ReplayAnalysis.exe');
-    execFile(analysis_path, [file], (err, stdout, stderr) => {
-      if (err) {
-        throw err;
-      }
-      save_as_json(file, stdout);
-      overlay.webContents.send("fromMain", ['replaydata', stdout]);
-    });
+  // For proper packaging I need to use pyinstalled executable instead of running python with shell
+  const analysis_path = path.join(__dirname, 'ReplayAnalysis/ReplayAnalysis.exe');
+  execFile(analysis_path, [file], (err, stdout, stderr) => {
+    if (err) {
+      throw err;
+    }
+    save_as_json(file, stdout);
+    overlay.webContents.send("fromMain", ['replaydata', stdout]);
+  });
 }
 
 function save_as_json(file, data) {

@@ -1,6 +1,6 @@
 """
 This script makes packaging with Pyinstaller easier
-Run the pyinstaller, cleans up, zips files.
+Runs the pyinstaller, moves files, cleans ups.
 
 """
 
@@ -23,7 +23,7 @@ for root, directories, files in os.walk(os.getcwd()):
                 shutil.rmtree(dir_path)
 
 
-# Run pyinstaller --noconsole
+# Run pyinstaller
 os.system('cmd /c "pyinstaller.exe --add-data venv\Lib\site-packages\s2protocol;s2protocol --add-data parser\SC2Dictionaries\*.csv;SC2Dictionaries --add-data parser\SC2Dictionaries\*.txt;SC2Dictionaries parser\ReplayAnalysis.py"')
 
 # Remove build

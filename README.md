@@ -1,4 +1,4 @@
-# SC2Parser_ElectronJS
+# SC2Parser in ElectronJS
  
 A simple app using ElectronJS with integrated Python module for parsing StarCrarf II replays.
 
