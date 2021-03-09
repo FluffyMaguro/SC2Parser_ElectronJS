@@ -142,9 +142,9 @@ function parse_replay(file) {
 function save_as_json(file, data) {
   // Save data into a json file
   try {
-    const jdata = JSON.stringify(data);
+    // Data is already in json representation
     output_path = file.replace('.SC2Replay', '.json');
-    fs.writeFileSync(output_path, jdata, 'utf8');
+    fs.writeFileSync(output_path, data, 'utf8');
     console.log('File saved!')
 
   } catch (err) {
